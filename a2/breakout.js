@@ -57,9 +57,9 @@ function drawBall(x, y) {
     canvasContext.fill();
 }
 
-function drawPaddle(x, y, w, h) {
+function drawPaddle(x, w) {
     canvasContext.fillStyle = PADDLE_COLOR;
-    drawRectangle(x, y, w, h);
+    drawRectangle(x, canvasHeight - PADDLE_HEIGHT, w, PADDLE_HEIGHT);
 }
 
 function drawRectangle(x, y, w, h) {
@@ -145,7 +145,7 @@ function handlePaddleMovement() {
     paddleX += (rightKeyDown && 5) || (leftKeyDown && -5) || 0;
     paddleX = Math.min(canvasWidth - paddleWidth, paddleX);
     paddleX = Math.max(0, paddleX);
-    drawPaddle(paddleX, canvasHeight - PADDLE_HEIGHT, paddleWidth, PADDLE_HEIGHT);
+    drawPaddle(paddleX, paddleWidth);
 }
 
 function handleBallMovement() {
@@ -318,7 +318,7 @@ function initializeCanvas() {
     paddleX = (canvasWidth - paddleWidth)/ 2;
 
     drawBall(ballX, ballY);
-    drawPaddle(paddleX, canvasHeight - PADDLE_HEIGHT, paddleWidth, PADDLE_HEIGHT);
+    drawPaddle(paddleX, paddleWidth);
 
     // start the game when the player clicks the button
     document.getElementById("canvas").addEventListener("click" , restartGame);
