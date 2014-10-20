@@ -3,14 +3,13 @@
     // Variables needed by more than 1 function.
     var interval,
         // Constants
-        //
 
         // brick
         SPACE_ABOVE_BRICKS = 50,
         ROW_COUNT = 8,
         COLUMN_COUNT = 14,
         // Score
-        SPEED_MULTIPLIER = 1.10,
+        SPEED_MULTIPLIER = 1.50,
         // paddle position
         PADDLE_HEIGHT = 10,
         INITIAL_PADDLE_WIDTH = 100,
@@ -34,6 +33,7 @@
         // Score
         score = 0,
         running = false,
+        // UI scaling
         scaledBy = 1,
         // paddle position
         paddleX,
@@ -69,7 +69,7 @@
                 bricks[row][column] = new Brick(
                     (column * brick_width), (row * brick_height) + SPACE_ABOVE_BRICKS,
                     brick_width,
-                    brick_height);
+                    brick_height, BRICK_COLORS[row / 2], 7 - (Math.floor(row / 2) * 2));
             }
         }
     }
@@ -77,7 +77,6 @@
     function drawBricks() {
         var row, column;
         for (row = 0; row < ROW_COUNT; row += 1) {
-            canvasContext.fillStyle = BRICK_COLORS[row / 2];
             for (column = 0; column < COLUMN_COUNT; column += 1) {
                 if (bricks[row][column].exists) {
                     bricks[row][column].draw(canvasContext);
@@ -171,6 +170,9 @@
         } else {
             initializeBricks();
             startGame();
+            canvasContext.fillStyle = "White";
+            canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
+            canvasContext.fillText("Next Level!", scaleUiValue(150), scaleUiValue(300));
             pauseGame();
         }
     }
@@ -209,7 +211,7 @@
             canvasContext.fillText("PAUSED", scaleUiValue(150), scaleUiValue(200));
             clearInterval(interval);
         } else {
-            interval = setInterval(updateCanvas, 15/Math.max(scaleUiValue(1),1));
+            interval = setInterval(updateCanvas, 15 / scaleUiValue(1));
         }
         running = !running;
     }
@@ -224,16 +226,24 @@
         rightKeyDown = false;
 
         clearInterval(interval);
-        interval = setInterval(updateCanvas, 15/Math.max(scaleUiValue(1),1));
+        interval = setInterval(updateCanvas, 15 / scaleUiValue(1));
     }
 
     function maximizeCanvas(context) {
         var widthRatio = window.innerWidth / context.canvas.width;
+        // leave some space for the score div up top
         var heightRatio = (window.innerHeight * 0.9) / context.canvas.height;
 
         var ratio = Math.min(widthRatio, heightRatio);
         context.canvas.width = context.canvas.width * ratio;
         context.canvas.height = context.canvas.height * ratio;
+
+        if (context.canvas.height < 500) {
+
+            context.canvas.width = context.canvas.width * (500 / context.canvas.height);
+            context.canvas.height = context.canvas.height * (500 / context.canvas.height);
+        }
+
         return ratio;
     }
 
@@ -247,7 +257,7 @@
         canvasWidth = document.getElementById("canvas").offsetWidth;
         canvasHeight = document.getElementById("canvas").offsetHeight;
 
-        // draw bricks
+        // draw bricks, paddle and scale them for the window size
         brick_width = (canvasWidth / COLUMN_COUNT);
         brick_height = (canvasHeight / 30);
         SPACE_ABOVE_BRICKS = scaleUiValue(SPACE_ABOVE_BRICKS);
@@ -321,36 +331,17 @@
         return document.getElementById("livesField").innerHTML;
     }
 
-    function incrimentScore() {
-        switch (Math.floor((ball.y - SPACE_ABOVE_BRICKS) / brick_height)) {
-            case 6:
-            case 7:
-                score = score + 1;
-                break;
-            case 4:
-            case 5:
-                score = score + 3;
-                break;
-            case 3:
-            case 2:
-                score = score + 5;
-                break;
-            case 1:
-            case 0:
-                score = score + 7;
-                break;
-        }
-        updateScore();
-    }
-
-    function Brick(x, y, w, h) {
+    function Brick(x, y, w, h, colour, points) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.exists = true;
+        this.colour = colour;
+        this.points = points;
 
         this.draw = function(context) {
+            canvasContext.fillStyle = this.colour;
             context.beginPath();
             context.rect(this.x - 1, this.y - 1, this.w + 2, this.h + 2);
             context.closePath();
@@ -382,17 +373,17 @@
             var row = Math.floor((this.y - SPACE_ABOVE_BRICKS) / brick_height),
                 column = Math.floor(this.x / brick_width);
 
-            if (ball.y < ((ROW_COUNT * brick_height) + SPACE_ABOVE_BRICKS) && (this.y > SPACE_ABOVE_BRICKS) && bricks[row][column].exists === true) {
+            if (ball.y < ((ROW_COUNT * brick_height) + SPACE_ABOVE_BRICKS) &&
+                (this.y > SPACE_ABOVE_BRICKS) &&
+                bricks[row][column].exists === true) {
                 // bounce
                 this.dy = -this.dy;
 
-                // brick was hit
+                // brick was hit, get rid of it, increase the score, adjust speed of ball if needed
                 bricks[row][column].exists = false;
-
                 this.setSpeed(row);
-
-                // increase the score
-                incrimentScore();
+                score = score + bricks[row][column].points;
+                updateScore();
                 return true;
             }
             return false;
@@ -412,6 +403,7 @@
                 (rowHit === 3 && this.numOrangeHit === 1) ||
                 (rowHit === 1 && this.numRedHit === 1)) {
                 this.dy = this.dy * SPEED_MULTIPLIER;
+                SPEED_MULTIPLIER = (Math.pow(2.74, -score) + 1)
             }
         };
     }
