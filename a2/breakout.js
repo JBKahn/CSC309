@@ -206,6 +206,9 @@
     }
 
     function pauseGame() {
+        if (score == 448 * 2) {
+            return;
+        }
         if (running) {
             canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
             canvasContext.fillText("PAUSED", scaleUiValue(150), scaleUiValue(200));
