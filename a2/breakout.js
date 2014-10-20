@@ -203,14 +203,14 @@
                 canvasContext.fillText("PAUSED", sc(150), sc(200));
                 clearInterval(interval);
             } else {
-                interval = setInterval(updateCanvas, 12);
+                interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
             }
             running = !running;
         }
     }
 
     function startGame() {
-        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, sc((Math.random() - .5) * 4), ball.dy);
+        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - .5) * 4, ball.dy);
         // reset scoreboard
         updateScore();
 
@@ -219,8 +219,7 @@
         rightKeyDown = false;
 
         clearInterval(interval);
-
-        interval = setInterval(updateCanvas, 12);
+        interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
     }
 
     function maximizeCanvas(context) {
@@ -265,7 +264,7 @@
 
 
         // draw the ball and paddle
-        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, sc((Math.random() - .5) * 4), sc(4));
+        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - 0.5) * 4, 4);
         paddleX = (canvasWidth - paddleWidth) / 2;
 
         ball.draw(canvasContext);
