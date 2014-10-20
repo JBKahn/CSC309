@@ -203,7 +203,7 @@
                 canvasContext.fillText("PAUSED", sc(150), sc(200));
                 clearInterval(interval);
             } else {
-                interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
+                interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
             }
             running = !running;
         }
@@ -219,7 +219,7 @@
         rightKeyDown = false;
 
         clearInterval(interval);
-        interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
+        interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
     }
 
     function maximizeCanvas(context) {
