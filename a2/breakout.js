@@ -101,7 +101,7 @@
     function handleBallMovement() {
         var ballAtPaddleHeight,
             vallAbovePaddle;
-        // bounce off left and right walls 
+        // bounce off left and right walls
         ball.dx = ball.dx * (((ball.x + ball.dx > canvasWidth || ball.x + ball.dx < 0) && -1) || 1);
         ball.dy = ball.dy * (((ball.y + ball.dy < 0) && -1) || 1);
 
@@ -111,7 +111,7 @@
 
         if (ballAtPaddleHeight && vallAbovePaddle) {
             // reverse direction and change angle.
-            ball.dx = 6 * (((ball.x - paddleX) / paddleWidth) - .5);
+            ball.dx = 6 * (((ball.x - paddleX) / paddleWidth) - 0.5);
             ball.dy = -ball.dy;
         }
         // move the ball
@@ -134,9 +134,9 @@
             lost = loseLife();
             clearInterval(interval);
             if (lost >= 0) {
-                continueGame()
+                continueGame();
             } else {
-                canvasContext.fillStyle = "White"
+                canvasContext.fillStyle = "White";
                 canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
                 canvasContext.fillText("You Have Lost!", 85, 200);
             }
@@ -144,38 +144,23 @@
     }
 
     function updateCanvas() {
-        if (running == true) {
-            // If we hit a brick then do stuff.
-            ball.handleHitBrick();
+        // If we hit a brick then do stuff.
+        ball.handleHitBrick();
 
-            // redraw!
-            canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
-            drawBricks();
-            ball.draw(canvasContext)
+        // redraw!
+        canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
+        drawBricks();
+        ball.draw(canvasContext);
 
-            // Paddle updates
-            handlePaddleMovement();
+        // Paddle updates
+        handlePaddleMovement();
 
-            // Ball updates
-            handleBallMovement();
+        // Ball updates
+        handleBallMovement();
 
-            // Changes to state i.e. lost life or won level
-            handleGameStateChanges();
-
-        } else {
-            // Intermission
-            canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
-            canvasContext.fillText("PAUSED", sc(150), sc(200));
-        }
+        // Changes to state i.e. lost life or won level
+        handleGameStateChanges();
     }
-
-    // Speed
-
-
-
-    // Game logic
-    //
-
 
     function handleBeatLevel() {
         clearInterval(interval);
@@ -185,38 +170,48 @@
             canvasContext.fillText("You Have Won!", sc(85), sc(200));
         } else {
             initializeBricks();
-            startGame()
+            startGame();
         }
     }
 
     function continueGame() {
-        startGame()
+        startGame();
     }
 
-    function restartGame(e) {
+    function restartGameHandler(e) {
         if (e.keyCode === 82) {
-            running = true;
-            paddleWidth = INITIAL_PADDLE_WIDTH
-            score = 0;
-            document.getElementById("livesField").innerHTML = 3;
-            initializeBricks();
-            startGame()
-            e.target.removeEventListener(e.type, arguments.callee);
+            restartGame();
         }
 
+    }
+
+    function restartGame() {
+        clearInterval(interval);
+        running = true;
+        paddleWidth = INITIAL_PADDLE_WIDTH;
+        score = 0;
+        document.getElementById("livesField").innerHTML = 3;
+        initializeBricks();
+        startGame();
+        ball.dy = 4;
     }
 
     function pauseGame(e) {
         if (e.keyCode === 80) {
+            if (running) {
+                canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
+                canvasContext.fillText("PAUSED", sc(150), sc(200));
+                clearInterval(interval);
+            } else {
+                interval = setInterval(updateCanvas, 12);
+            }
             running = !running;
         }
     }
 
-
-
     function startGame() {
-        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - .5) * 4, ball.dy);
-        // reset scoreboard 
+        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, sc((Math.random() - .5) * 4), ball.dy);
+        // reset scoreboard
         updateScore();
 
         // reset arrow keys to false
@@ -226,11 +221,11 @@
         clearInterval(interval);
 
         interval = setInterval(updateCanvas, 12);
-    };
+    }
 
     function maximizeCanvas(context) {
         var widthRatio = window.innerWidth / context.canvas.width;
-        var heightRatio = (window.innerHeight * .9) / context.canvas.height;
+        var heightRatio = (window.innerHeight * 0.9) / context.canvas.height;
 
         var ratio = Math.min(widthRatio, heightRatio);
         context.canvas.width = context.canvas.width * ratio;
@@ -253,7 +248,7 @@
         brick_height = (canvasHeight / 30);
         SPACE_ABOVE_BRICKS = sc(SPACE_ABOVE_BRICKS);
         INITIAL_PADDLE_WIDTH = sc(INITIAL_PADDLE_WIDTH);
-        PADDLE_HEIGHT = sc(PADDLE_HEIGHT)
+        PADDLE_HEIGHT = sc(PADDLE_HEIGHT);
         PADDLE_HEIGHT = sc(PADDLE_HEIGHT);
         paddleWidth = INITIAL_PADDLE_WIDTH;
 
@@ -270,7 +265,7 @@
 
 
         // draw the ball and paddle
-        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - .5) * 4, 4);
+        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, sc((Math.random() - .5) * 4), sc(4));
         paddleX = (canvasWidth - paddleWidth) / 2;
 
         ball.draw(canvasContext);
@@ -291,10 +286,10 @@
 
     function stopMovePaddleWithKeyboard(e) {
         if (rightKeyDown && e.keyCode === 39) {
-            rightKeyDown = false
+            rightKeyDown = false;
         }
         if (leftKeyDown && e.keyCode === 37) {
-            leftKeyDown = false
+            leftKeyDown = false;
         }
     }
 
@@ -306,7 +301,7 @@
     document.addEventListener("keydown", movePaddleWithKeyboard);
     document.addEventListener("keyup", stopMovePaddleWithKeyboard);
     document.addEventListener("keyup", pauseGame);
-    document.addEventListener("keyup", restartGame);
+    document.addEventListener("keyup", restartGameHandler);
 
     // Scaore and life handling
     //
@@ -358,15 +353,15 @@
             context.rect(this.x - 1, this.y - 1, this.w + 2, this.h + 2);
             context.closePath();
             context.fill();
-        }
+        };
     }
 
     function Ball(x, y, dx, dy) {
         this.r = sc(5);
         this.x = x - (this.r / 2);
         this.y = y;
-        this.dx = sc(dx);
-        this.dy = sc(dy);
+        this.dx = dx;
+        this.dy = dy;
         this.exists = true;
         this.colour = "#C84848";
         this.numOrangeHit = 0;
@@ -379,7 +374,7 @@
             context.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
             context.closePath();
             context.fill();
-        }
+        };
 
         this.handleHitBrick = function() {
             var row = Math.floor((ball.y - SPACE_ABOVE_BRICKS) / brick_height),
@@ -387,7 +382,7 @@
 
             if (ball.y < ((ROW_COUNT * brick_height) + SPACE_ABOVE_BRICKS) && (ball.y > SPACE_ABOVE_BRICKS) && bricks[row][column].exists === true) {
                 // bounce
-                ball.dy = -ball.dy
+                ball.dy = -ball.dy;
 
                 // brick was hit
                 bricks[row][column].exists = false;
@@ -397,7 +392,7 @@
                 // increase the score
                 incrimentScore();
             }
-        }
+        };
 
 
         this.setSpeed = function(rowHit) {
@@ -408,13 +403,14 @@
             }
             this.numBricksHit++;
 
-            if ((this.numBricksHit == 0) ||
+            if ((this.numBricksHit == 4) ||
                 (this.numBricksHit == 12) ||
                 (rowHit == 3 && this.numOrangeHit === 1) ||
                 (rowHit == 1 && this.numRedHit === 1)) {
+                console.log("multiple speed");
                 ball.dy = ball.dy * SPEED_MULTIPLIER;
             }
-        }
+        };
     }
 
     // scale all the values
