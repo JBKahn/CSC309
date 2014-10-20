@@ -340,11 +340,11 @@
         this.w = w;
         this.h = h;
         this.exists = true;
-        this.ballcolour = ballcolour;
+        var ballcolour = ballcolour;
         this.points = points;
 
         this.draw = function(context) {
-            canvasContext.fillStyle = this.ballcolour;
+            canvasContext.fillStyle = ballcolour;
             context.beginPath();
             context.rect(this.x - 1, this.y - 1, this.w + 2, this.h + 2);
             context.closePath();
