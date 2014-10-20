@@ -331,17 +331,17 @@
         return document.getElementById("livesField").innerHTML;
     }
 
-    function Brick(x, y, w, h, colour, points) {
+    function Brick(x, y, w, h, ballcolour, points) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.exists = true;
-        this.colour = colour;
+        this.ballcolour = ballcolour;
         this.points = points;
 
         this.draw = function(context) {
-            canvasContext.fillStyle = this.colour;
+            canvasContext.fillStyle = this.ballcolour;
             context.beginPath();
             context.rect(this.x - 1, this.y - 1, this.w + 2, this.h + 2);
             context.closePath();
