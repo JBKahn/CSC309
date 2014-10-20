@@ -377,12 +377,12 @@
         };
 
         this.handleHitBrick = function() {
-            var row = Math.floor((ball.y - SPACE_ABOVE_BRICKS) / brick_height),
-                column = Math.floor(ball.x / brick_width);
+            var row = Math.floor((this.y - SPACE_ABOVE_BRICKS) / brick_height),
+                column = Math.floor(this.x / brick_width);
 
-            if (ball.y < ((ROW_COUNT * brick_height) + SPACE_ABOVE_BRICKS) && (ball.y > SPACE_ABOVE_BRICKS) && bricks[row][column].exists === true) {
+            if (ball.y < ((ROW_COUNT * brick_height) + SPACE_ABOVE_BRICKS) && (this.y > SPACE_ABOVE_BRICKS) && bricks[row][column].exists === true) {
                 // bounce
-                ball.dy = -ball.dy;
+                this.dy = -this.dy;
 
                 // brick was hit
                 bricks[row][column].exists = false;
@@ -409,7 +409,7 @@
                 (this.numBricksHit === 12) ||
                 (rowHit === 3 && this.numOrangeHit === 1) ||
                 (rowHit === 1 && this.numRedHit === 1)) {
-                ball.dy = ball.dy * SPEED_MULTIPLIER;
+                this.dy = this.dy * SPEED_MULTIPLIER;
             }
         };
     }
