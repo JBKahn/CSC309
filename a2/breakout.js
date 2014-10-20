@@ -10,7 +10,7 @@
         ROW_COUNT = 8,
         COLUMN_COUNT = 14,
         // Score
-        SPEED_MULTIPLIER = 1.25,
+        SPEED_MULTIPLIER = 1.20,
         // paddle position
         PADDLE_HEIGHT = 10,
         INITIAL_PADDLE_WIDTH = 100,
@@ -119,11 +119,11 @@
         ball.y += ball.dy;
     }
 
-    function handleGameStateChanges() {
+    function handleGameStateChanges(hitBrick) {
         var ballHitBittom,
             lost;
         // Check if the level is beaten
-        if (score % 448 === 0 && score > 0) {
+        if (hitBrick && score % 448 === 0 && score > 0) {
             handleBeatLevel();
             return;
         }
@@ -145,7 +145,7 @@
 
     function updateCanvas() {
         // If we hit a brick then do stuff.
-        ball.handleHitBrick();
+        var hitBrick = ball.handleHitBrick();
 
         // redraw!
         canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -159,7 +159,7 @@
         handleBallMovement();
 
         // Changes to state i.e. lost life or won level
-        handleGameStateChanges();
+        handleGameStateChanges(hitBrick);
     }
 
     function handleBeatLevel() {
@@ -391,22 +391,24 @@
 
                 // increase the score
                 incrimentScore();
+                return true;
             }
+            return false;
         };
 
 
         this.setSpeed = function(rowHit) {
-            if (rowHit == 0 || rowHit == 1) {
+            if (rowHit === 0 || rowHit === 1) {
                 this.numRedHit++;
-            } else if (rowHit == 2 || rowHit == 3) {
+            } else if (rowHit === 2 || rowHit === 3) {
                 this.numOrangeHit++;
             }
             this.numBricksHit++;
 
-            if ((this.numBricksHit == 4) ||
-                (this.numBricksHit == 12) ||
-                (rowHit == 3 && this.numOrangeHit === 1) ||
-                (rowHit == 1 && this.numRedHit === 1)) {
+            if ((this.numBricksHit === 4) ||
+                (this.numBricksHit === 12) ||
+                (rowHit === 3 && this.numOrangeHit === 1) ||
+                (rowHit === 1 && this.numRedHit === 1)) {
                 ball.dy = ball.dy * SPEED_MULTIPLIER;
             }
         };
