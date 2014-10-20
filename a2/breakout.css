@@ -16,10 +16,11 @@ html {
     display: inline-block;
 }
 .game-info-container {
-    margin: 10px auto;
+    margin: 0px auto;
     text-align: center;
 }
 .game-info {
     display: inline-block;
-    font-size: 30px;
+    font-size: 2vw;
+    height: auto;
 }
