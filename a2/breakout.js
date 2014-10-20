@@ -137,7 +137,7 @@
                 continueGame();
             } else {
                 canvasContext.fillStyle = "White";
-                canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
+                canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
                 canvasContext.fillText("You Have Lost!", 85, 200);
             }
         }
@@ -166,8 +166,8 @@
         clearInterval(interval);
         if (score / 448 == 2) {
             canvasContext.fillStyle = "White";
-            canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
-            canvasContext.fillText("You Have Won!", sc(85), sc(200));
+            canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
+            canvasContext.fillText("You Have Won!", scaleUiValue(85), scaleUiValue(200));
         } else {
             initializeBricks();
             startGame();
@@ -205,11 +205,11 @@
 
     function pauseGame() {
         if (running) {
-            canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
-            canvasContext.fillText("PAUSED", sc(150), sc(200));
+            canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
+            canvasContext.fillText("PAUSED", scaleUiValue(150), scaleUiValue(200));
             clearInterval(interval);
         } else {
-            interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
+            interval = setInterval(updateCanvas, 15/Math.max(scaleUiValue(1),1));
         }
         running = !running;
     }
@@ -224,7 +224,7 @@
         rightKeyDown = false;
 
         clearInterval(interval);
-        interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
+        interval = setInterval(updateCanvas, 15/Math.max(scaleUiValue(1),1));
     }
 
     function maximizeCanvas(context) {
@@ -250,10 +250,10 @@
         // draw bricks
         brick_width = (canvasWidth / COLUMN_COUNT);
         brick_height = (canvasHeight / 30);
-        SPACE_ABOVE_BRICKS = sc(SPACE_ABOVE_BRICKS);
-        INITIAL_PADDLE_WIDTH = sc(INITIAL_PADDLE_WIDTH);
-        PADDLE_HEIGHT = sc(PADDLE_HEIGHT);
-        PADDLE_HEIGHT = sc(PADDLE_HEIGHT);
+        SPACE_ABOVE_BRICKS = scaleUiValue(SPACE_ABOVE_BRICKS);
+        INITIAL_PADDLE_WIDTH = scaleUiValue(INITIAL_PADDLE_WIDTH);
+        PADDLE_HEIGHT = scaleUiValue(PADDLE_HEIGHT);
+        PADDLE_HEIGHT = scaleUiValue(PADDLE_HEIGHT);
         paddleWidth = INITIAL_PADDLE_WIDTH;
 
         initializeBricks();
@@ -261,10 +261,10 @@
 
         canvasContext.fillStyle = "White";
         // Font not working here, but is everywehre else. Due to loading after initialize is called.
-        canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
-        canvasContext.fillText("Press 'r' to start the game,", sc(85), sc(115));
-        canvasContext.fillText("or to Restart it at any time", sc(120), sc(150));
-        canvasContext.fillText("To pause, hit 'p'", sc(155), sc(190));
+        canvasContext.font = '' + scaleUiValue(30) + 'px "PressStart2P"';
+        canvasContext.fillText("Press 'r' to start the game,", scaleUiValue(85), scaleUiValue(115));
+        canvasContext.fillText("or to Restart it at any time", scaleUiValue(120), scaleUiValue(150));
+        canvasContext.fillText("To pause, hit 'p'", scaleUiValue(155), scaleUiValue(190));
 
 
 
@@ -359,7 +359,7 @@
     }
 
     function Ball(x, y, dx, dy) {
-        this.r = sc(5);
+        this.r = scaleUiValue(5);
         this.x = x - (this.r / 2);
         this.y = y;
         this.dx = dx;
@@ -417,7 +417,7 @@
     }
 
     // scale all the values
-    function sc(x) {
+    function scaleUiValue(x) {
         return x * scaledBy;
     }
 
