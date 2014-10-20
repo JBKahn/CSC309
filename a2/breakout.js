@@ -10,7 +10,7 @@
         ROW_COUNT = 8,
         COLUMN_COUNT = 14,
         // Score
-        SPEED_MULTIPLIER = 1.20,
+        SPEED_MULTIPLIER = 1.10,
         // paddle position
         PADDLE_HEIGHT = 10,
         INITIAL_PADDLE_WIDTH = 100,
