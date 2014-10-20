@@ -99,16 +99,16 @@
 
     function handleBallMovement() {
         var ballAtPaddleHeight,
-            vallAbovePaddle;
+            ballAbovePaddle;
         // bounce off left and right walls
         ball.dx = ball.dx * (((ball.x + ball.dx > canvasWidth || ball.x + ball.dx < 0) && -1) || 1);
         ball.dy = ball.dy * (((ball.y + ball.dy < 0) && -1) || 1);
 
         // Check if player hit the paddle (the ball is at the right height and above the paddle)
         ballAtPaddleHeight = ball.y + ball.dy > canvasHeight - PADDLE_HEIGHT;
-        vallAbovePaddle = ball.x > paddleX && ball.x < paddleX + paddleWidth;
+        ballAbovePaddle = ball.x > paddleX && ball.x < paddleX + paddleWidth;
 
-        if (ballAtPaddleHeight && vallAbovePaddle) {
+        if (ballAtPaddleHeight && ballAbovePaddle) {
             // reverse direction and change angle.
             ball.dx = 6 * (((ball.x - paddleX) / paddleWidth) - 0.5);
             ball.dy = -ball.dy;
@@ -120,7 +120,8 @@
 
     function handleGameStateChanges(hitBrick) {
         var ballHitBittom,
-            lost;
+            lost,
+            ballAbovePaddle;
         // Check if the level is beaten
         if (hitBrick && score % 448 === 0 && score > 0) {
             handleBeatLevel();
@@ -128,8 +129,9 @@
         }
 
         // Check if player has lost a life
+        ballAbovePaddle = ball.x > paddleX && ball.x < paddleX + paddleWidth;
         ballHitBittom = ball.y + ball.dy > canvasHeight;
-        if (ballHitBittom) {
+        if (ballHitBittom && !ballAbovePaddle) {
             lost = loseLife();
             clearInterval(interval);
             if (lost >= 0) {
