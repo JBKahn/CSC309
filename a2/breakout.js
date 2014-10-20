@@ -10,7 +10,7 @@
         ROW_COUNT = 8,
         COLUMN_COUNT = 14,
         // Score
-        SPEED_MULTIPLIER = 1.20,
+        SPEED_MULTIPLIER = 1.10,
         // paddle position
         PADDLE_HEIGHT = 10,
         INITIAL_PADDLE_WIDTH = 100,
@@ -171,6 +171,7 @@
         } else {
             initializeBricks();
             startGame();
+            pauseGame();
         }
     }
 
@@ -196,21 +197,25 @@
         ball.dy = 4;
     }
 
-    function pauseGame(e) {
+    function pauseGameHandler(e) {
         if (e.keyCode === 80) {
-            if (running) {
-                canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
-                canvasContext.fillText("PAUSED", sc(150), sc(200));
-                clearInterval(interval);
-            } else {
-                interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
-            }
-            running = !running;
+            pauseGame()
         }
     }
 
+    function pauseGame() {
+        if (running) {
+            canvasContext.font = '' + sc(30) + 'px "PressStart2P"';
+            canvasContext.fillText("PAUSED", sc(150), sc(200));
+            clearInterval(interval);
+        } else {
+            interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
+        }
+        running = !running;
+    }
+
     function startGame() {
-        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - .5) * 4, ball.dy);
+        ball = new Ball((canvasWidth) / 2, (canvasHeight) / 2, (Math.random() - 0.5) * 4, ball.dy);
         // reset scoreboard
         updateScore();
 
@@ -219,7 +224,7 @@
         rightKeyDown = false;
 
         clearInterval(interval);
-        interval = setInterval(updateCanvas, 12/Math.max(sc(1,1)));
+        interval = setInterval(updateCanvas, 15/Math.max(sc(1),1));
     }
 
     function maximizeCanvas(context) {
@@ -299,7 +304,7 @@
     document.addEventListener("mousemove", movePaddleWithMouse);
     document.addEventListener("keydown", movePaddleWithKeyboard);
     document.addEventListener("keyup", stopMovePaddleWithKeyboard);
-    document.addEventListener("keyup", pauseGame);
+    document.addEventListener("keyup", pauseGameHandler);
     document.addEventListener("keyup", restartGameHandler);
 
     // Scaore and life handling
@@ -337,8 +342,6 @@
         }
         updateScore();
     }
-
-    initializeCanvas();
 
     function Brick(x, y, w, h) {
         this.x = x;
@@ -418,4 +421,5 @@
         return x * scaledBy;
     }
 
+    window.onload = initializeCanvas();
 }());
