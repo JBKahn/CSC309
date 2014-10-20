@@ -396,9 +396,9 @@
 
 
         this.setSpeed = function(rowHit) {
-            if (rowHit == 1 || rowHit == 2) {
+            if (rowHit == 0 || rowHit == 1) {
                 this.numRedHit++;
-            } else if (rowHit == 3 || rowHit == 4) {
+            } else if (rowHit == 2 || rowHit == 3) {
                 this.numOrangeHit++;
             }
             this.numBricksHit++;
