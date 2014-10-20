@@ -407,7 +407,6 @@
                 (this.numBricksHit == 12) ||
                 (rowHit == 3 && this.numOrangeHit === 1) ||
                 (rowHit == 1 && this.numRedHit === 1)) {
-                console.log("multiple speed");
                 ball.dy = ball.dy * SPEED_MULTIPLIER;
             }
         };
