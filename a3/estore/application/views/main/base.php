@@ -7,7 +7,8 @@
     </head>
     <body>
         <heading>
-            <h1>Buy The Best Baseball Cards For The Best Value!</h1>
+            <h1>Crazy Ernie's Amazing Emporium Of Total Bargain Madness</h1>
+            <h2>Buy The Best Baseball Cards For The Best Value!</h2>
             <ul class="nav nav-pills" role="tablist">
               <li role="presentation" class="active"><a href="<?= base_url();?>store/index">Home</a></li>
                 <?php
