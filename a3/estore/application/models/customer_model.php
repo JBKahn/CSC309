@@ -15,15 +15,15 @@ class Customer_model extends CI_Model {
         return $this->db->delete("customers",array('id' => $id ));
     }
 
-    function insert($customer) {
+    function insert($input) {
         return $this->db->insert(
             "customers",
             array(
-                'first' => $customer->first,
-                'last' => $customer->last,
-                'login' => $customer->login,
-                'password' => $customer->password,
-                'email' => $customer->email
+                'first' => $input['first'],
+                'last' => $input['last'],
+                'login' => $input['login'],
+                'password' => $input['password'],
+                'email' => $input['email']
             )
         );
     }

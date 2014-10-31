@@ -65,24 +65,33 @@ class Store extends CI_Controller {
             return;
         }
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('name','Name','required|is_unique[products.name]');
-        $this->form_validation->set_rules('description','Description','required');
-        $this->form_validation->set_rules('price','Price','required');
+
+        $rules = array(
+            array('field' => 'name',
+                  'label' => 'Name',
+                  'rules' => 'required|is_unique[products.name]'
+            ),
+            array('field' => 'description',
+                  'label' => 'Description',
+                  'rules' => 'required'
+            ),
+            array('field' => 'price',
+                  'label' => 'Price',
+                  'rules' => 'required|numeric'
+            )
+        );
+        $this->form_validation->set_rules($rules);
 
         $fileUploadSuccess = $this->upload->do_upload();
 
         if ($this->form_validation->run() == true && $fileUploadSuccess) {
-            $this->load->model('product_model');
-
-            $product = new Product();
-            $product->name = $this->input->get_post('name');
-            $product->description = $this->input->get_post('description');
-            $product->price = $this->input->get_post('price');
-
             $data = $this->upload->data();
-            $product->photo_url = $data['file_name'];
 
-            $this->product_model->insert($product);
+            $post = $this->input->post();
+            $post['photo_url'] = $data['file_name'];
+
+            $this->load->model('product_model');
+            $this->product_model->insert($post);
 
             //Then we redirect to the index page again
             redirect('store/index', 'refresh');
@@ -96,28 +105,45 @@ class Store extends CI_Controller {
 
     function addCustomer() {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('first','First Name','required');
-        $this->form_validation->set_rules('last','Last Name','required');
-        $this->form_validation->set_rules('login','User Name','required|is_unique[customers.login]');
-        $this->form_validation->set_rules('password','Password','required|min_length[6]');
-        $this->form_validation->set_rules('email','Email','required|valid_email');
+        $rules = array(
+            array('field' => 'first',
+                  'label' => 'First Name',
+                  'rules' => 'required'
+            ),
+            array('field' => 'last',
+                  'label' => 'Last Name',
+                  'rules' => 'required'
+            ),
+            array('field' => 'login',
+                  'label' => 'User Name',
+                  'rules' => 'required|is_unique[customers.login]'
+            ),
+            array('field' => 'password',
+                  'label' => 'Password',
+                  'rules' => 'required|min_length[6]'
+            ),
+            array('field' => 'email',
+                  'label' => 'Email',
+                  'rules' => 'required|valid_email'
+            )
+        );
+
+        $this->form_validation->set_rules($rules);
 
         if ($this->form_validation->run() == true) {
             $this->load->model('customer_model');
-
-            $customer = new Customer();
-            $customer->first = htmlspecialchars($this->input->get_post('first'));
-            $customer->last = htmlspecialchars($this->input->get_post('last'));
-            $customer->login = htmlspecialchars($this->input->get_post('login'));
-            $customer->password = htmlspecialchars($this->input->get_post('password'));
-            $customer->email = htmlspecialchars($this->input->get_post('email'));
-
-            $this->customer_model->insert($customer);
+            $this->customer_model->insert($this->input->post());
 
             redirect('store/index', 'refresh');
         }
         else {
-            $this->renderPage('customer/signUp.php', null);
+            $customer = new Customer();
+            $customer->first = set_value('first');
+            $customer->last = set_value('last');
+            $customer->login = set_value('login');
+            $customer->email = set_value('email');
+            $data['customer'] = $customer;
+            $this->renderPage('customer/signUp.php', $data);
         }
     }
 
@@ -149,19 +175,29 @@ class Store extends CI_Controller {
             return;
         }
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('name','Name','required');
-        $this->form_validation->set_rules('description','Description','required');
-        $this->form_validation->set_rules('price','Price','required');
+        $rules = array(
+            array('field' => 'name',
+                  'label' => 'Name',
+                  'rules' => 'required'
+            ),
+            array('field' => 'description',
+                  'label' => 'Description',
+                  'rules' => 'required'
+            ),
+            array('field' => 'price',
+                  'label' => 'Price',
+                  'rules' => 'required|numeric'
+            )
+        );
+
+        $this->form_validation->set_rules($rules);
 
         if ($this->form_validation->run() == true) {
-            $product = new Product();
-            $product->id = $id;
-            $product->name = $this->input->get_post('name');
-            $product->description = $this->input->get_post('description');
-            $product->price = $this->input->get_post('price');
-
             $this->load->model('product_model');
-            $this->product_model->update($product);
+            $post = $this->input->post();
+            $post['id'] = $id;
+
+            $this->product_model->update($post);
             //Then we redirect to the index page again
             redirect('store/index', 'refresh');
         } else {
@@ -170,7 +206,7 @@ class Store extends CI_Controller {
             $product->name = set_value('name');
             $product->description = set_value('description');
             $product->price = set_value('price');
-            $data['product']=$product;
+            $data['product'] = $product;
             $this->renderPage('product/editForm.php', $data);
         }
     }
@@ -198,7 +234,7 @@ class Store extends CI_Controller {
     }
 
     function login() {
-        // $_SESSION['isAdmin'] = false;
+        $_SESSION['isAdmin'] = false;
         $_SESSION['isLoggedIn'] = false;
         $this->load->library('form_validation');
 
@@ -208,9 +244,8 @@ class Store extends CI_Controller {
                   'rules' => 'required') ,
             array('field' => 'password',
                   'label' => 'Password',
-                  'rules' => 'required') 
+                  'rules' => 'required')
         );
-
 
         $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() == true) {
@@ -355,9 +390,23 @@ class Store extends CI_Controller {
         $data['errorMsg'] = "";
 
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('creditcard_number','Credit Card Number','required|numeric|min_length[16]|max_length[16]');
-        $this->form_validation->set_rules('creditcard_month','Expiry Month (MM)','required|numeric|less_than[13]|greater_than[0]');
-        $this->form_validation->set_rules('creditcard_year','Expiry Year (YY)','required|numeric|less_than[100]|greater_than[0]');
+
+        $rules = array(
+            array('field' => 'creditcard_number',
+                  'label' => 'Credit Card Number',
+                  'rules' => 'required|numeric|min_length[16]|max_length[16]'
+            ),
+            array('field' => 'creditcard_month',
+                  'label' => 'Expiry Month (MM)',
+                  'rules' => 'required|numeric|less_than[13]|greater_than[0]'
+            ),
+            array('field' => 'creditcard_year',
+                  'label' => 'Expiry Year (YY)',
+                  'rules' => 'required|numeric|less_than[100]|greater_than[0]'
+            )
+        );
+
+        $this->form_validation->set_rules($rules);
 
         if ($this->form_validation->run() == true) {
             $this->load->model('order_model');

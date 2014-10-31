@@ -15,26 +15,26 @@ class Product_model extends CI_Model {
         return $this->db->delete("products",array('id' => $id ));
     }
 
-    function insert($product) {
+    function insert($input) {
         return $this->db->insert(
             "products",
             array(
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'photo_url' => $product->photo_url
+                'name' => $input['name'],
+                'description' => $input['description'],
+                'price' => $input['price'],
+                'photo_url' => $input['photo_url']
             )
         );
     }
 
-    function update($product) {
-        $this->db->where('id', $product->id);
+    function update($input) {
+        $this->db->where('id', $input['id']);
         return $this->db->update(
             "products",
             array(
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price
+                'name' => $input['name'],
+                'description' => $input['description'],
+                'price' => $input['price']
             )
         );
     }

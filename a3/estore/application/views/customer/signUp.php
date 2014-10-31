@@ -3,21 +3,21 @@
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "First Name" ?></label>
         <div class="col-sm-10">
-            <input type="text" name="first" value="" class="form-control" size="50"/>
+            <input type="text" name="first" value="<?php if (isset($customer)) echo $customer->first ?>" class="form-control" size="50"/>
             <?php echo form_error('first', '<div class="text-danger">', '</div>'); ?>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "Last Name" ?></label>
         <div class="col-sm-10">
-            <input type="text" name="last" value="" class="form-control" size="50"/>
+            <input type="text" name="last" value="<?php if (isset($customer)) echo $customer->last ?>" class="form-control" size="50"/>
             <?php echo form_error('last', '<div class="text-danger">', '</div>'); ?>
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "User Name" ?></label>
         <div class="col-sm-10">
-            <input type="text" name="login" value="" class="form-control" size="50"/>
+            <input type="text" name="login" value="<?php if (isset($customer)) echo $customer->login ?>" class="form-control" size="50"/>
             <?php echo form_error('login', '<div class="text-danger">', '</div>'); ?>
         </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "Email" ?></label>
         <div class="col-sm-10">
-            <input type="email" name="email" value="" class="form-control" size="50"/>
+            <input type="email" name="email" value="<?php if (isset($customer)) echo $customer->email ?>" class="form-control" size="50"/>
             <?php echo form_error('email', '<div class="text-danger">', '</div>'); ?>
         </div>
     </div>
