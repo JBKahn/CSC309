@@ -244,38 +244,44 @@ class Store extends CI_Controller {
                   'rules' => 'required') ,
             array('field' => 'password',
                   'label' => 'Password',
-                  'rules' => 'required')
+                  'rules' => 'required|callback_authentication_check')
         );
 
         $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() == true) {
-
-            $customer = new Customer;
-            $customer->login = htmlspecialchars($this->input->get_post('login'));
-            $customer->password = htmlspecialchars($this->input->get_post('password'));
-
-            // check database for valid login info
-            $this->load->model('customer_model');
-            $authenticated = $this->customer_model->isValidLogin($customer);
 
             // if user and pass are admin, log in as admin
             if (($customer->login === 'admin') && ($customer->password === 'admin')) {
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['isAdmin'] = true;
                 redirect('store/index', 'refresh');
-            } else if ($authenticated->num_rows() > 0) {
+            } else {
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['isAdmin'] = false;
                 $_SESSION['customerID'] = $authenticated->row()->id;
                 redirect('store/index', 'refresh');
-            } else { // invalid credentials, go back to login
-                $data['errorMsg'] = "Invalid username or password. Please try again.";
-                $this->renderPage('main/login.php', $data);
             }
         } else {
             $this->renderPage('main/login.php', null);
 
         }
+    }
+
+    function authentication_check() {
+        $customer = new Customer;
+        $customer->login = htmlspecialchars($this->input->get('login'));
+        $customer->password = htmlspecialchars($this->input->get('password'));
+
+        // check database for valid login info
+        $this->load->model('customer_model');
+        $authenticated = $this->customer_model->isValidLogin($customer);
+
+        if ((($customer->login === 'admin') && ($customer->password === 'admin')) || ($authenticated->num_rows() > 0)) {
+            return TRUE;
+        }
+
+        $this->form_validation->set_message('authentication_check', 'These credentials are invalid.');
+        return FALSE;
     }
 
     function cart(){
@@ -373,8 +379,21 @@ class Store extends CI_Controller {
             return;
         }
 
-        $data['errorMsg'] = "";
         $this->renderPage('checkout/creditCardForm.php', $data);
+    }
+
+    function check_valid_expiry() {
+        $month = $this->input->post('creditcard_month');
+        $year = $this->input->post('creditcard_year');
+
+        $expiredPreviousYear = $year < date("y", time());
+        $expiredThisYear = ($year == date("y", time())) && ($month <= date("m", time()));
+
+        if ($expiredPreviousYear || $expiredThisYear) {
+            $this->form_validation->set_message('check_valid_expiry', 'This credit card is expired.');
+            return FALSE;
+        }
+        return TRUE;
     }
 
     function payForm(){
@@ -387,7 +406,6 @@ class Store extends CI_Controller {
             $this->cart();
             return;
         }
-        $data['errorMsg'] = "";
 
         $this->load->library('form_validation');
 
@@ -402,7 +420,7 @@ class Store extends CI_Controller {
             ),
             array('field' => 'creditcard_year',
                   'label' => 'Expiry Year (YY)',
-                  'rules' => 'required|numeric|less_than[100]|greater_than[0]'
+                  'rules' => 'required|numeric|less_than[100]|greater_than[0]|callback_check_valid_expiry'
             )
         );
 
@@ -418,26 +436,10 @@ class Store extends CI_Controller {
             $order->order_date = date("Y-m-d", time());
             $order->order_time = date("G:i:s", time());
             $order->total = $_SESSION['total'];
-            $order->creditcard_number = htmlspecialchars($this->input->get_post('creditcard_number'));
-            $order->creditcard_month = htmlspecialchars($this->input->get_post('creditcard_month'));
-            $order->creditcard_year = htmlspecialchars($this->input->get_post('creditcard_year'));
+            $order->creditcard_number =  (int) ($this->input->get_post('creditcard_number'));
+            $order->creditcard_month =  (int) ($this->input->get_post('creditcard_month'));
+            $order->creditcard_year =  (int) ($this->input->get_post('creditcard_year'));
 
-            $sameYear = $order->creditcard_year == date("y", time());
-            $earlierYear = $order->creditcard_year < date("y", time());
-            $earlierMonth = $order->creditcard_month <= date("m", time());
-            if (($sameYear && $earlierMonth) || $earlierYear) {
-                $data['errorMsg'] = "Your credit card has expired, please use another one.";
-                $this->renderPage('checkout/creditCardForm.php', $data);
-                return;
-            }
-
-            $this->load->model('customer_model');
-            $customer = $this->customer_model->get($order->customer_id);
-            if (!$customer->email) {
-                $data['errorMsg'] = "Somehow you've authenticated without an email...";
-                $this->renderPage('checkout/creditCardForm.php', $data);
-                return;
-            }
             $order_id = $this->order_model->insert($order);
 
             $quantity = array();
@@ -463,21 +465,25 @@ class Store extends CI_Controller {
             $data['total'] = $order->total;
 
             // send mail
-            $config['mailtype'] = 'html';
-/*          // Commenting out as suggested
+            $this->load->model('customer_model');
+            $customer = $this->customer_model->get($order->customer_id);
+            if ($customer->email) {
+    /*          // Commenting out as suggested
 
-            $config['smtp_host'] = 'smtp.gmail.com';
-            $config['smtp_user'] = 'weneedtomakeanemail@gmail.com';
-            $config['smtp_pass'] = 'bestpassword3v3r';
-            $config['smtp_port'] = '465';
-*/
-            $this->email->initialize($config);
-            $this->email->from('weneedtomakeanemail@gmail.com', 'Baseball Card Store');
-            $this->email->to($customer->email);
-            $this->email->subject('Your Baseball Card Reciept');
-            $message = $this->load->view('checkout/emailReceiptToCustomer.php', $data, TRUE);
-            $this->email->message($message);
-            $this->email->send();
+                $config['smtp_host'] = 'smtp.gmail.com';
+                $config['smtp_user'] = 'weneedtomakeanemail@gmail.com';
+                $config['smtp_pass'] = 'bestpassword3v3r';
+                $config['smtp_port'] = '465';
+    */
+                $config['mailtype'] = 'html';
+                $message = $this->load->view('checkout/emailReceiptToCustomer.php', $data, TRUE);
+                $this->email->initialize($config);
+                $this->email->from('weneedtomakeanemail@gmail.com', 'Baseball Card Store');
+                $this->email->to($customer->email);
+                $this->email->subject('Your Baseball Card Reciept');
+                $this->email->message($message);
+                $this->email->send();
+            }
             $this->renderPage('checkout/orderReciept.php', $data);
         }
         else {
