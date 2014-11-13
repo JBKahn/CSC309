@@ -1,6 +1,6 @@
 <h2>Enter Your Credit Card Information</h2>
 
-<form class="form-horizontal" role="form" action='<?= base_url();?>store/payForm' method="post">
+<form class="form-horizontal" role="form" action='<?= base_url();?>cart/payForm' method="post">
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "Credit Card Number" ?></label>
         <div class="col-sm-10">
@@ -24,7 +24,7 @@
     </div>
     <div class="form-group">
         <div class="col-lg-offset-3 col-lg-10">
-            <button type="submit" class="btn btn-primary">Pay Now</button> or <a href="<?= base_url();?>store/cart" class="btn btn-primary">Go Back to Cart</a>
+            <button type="submit" class="btn btn-primary">Pay Now</button> or <a href="<?= base_url();?>cart/index" class="btn btn-primary">Go Back to Cart</a>
         </div>
     </div>
 </form>

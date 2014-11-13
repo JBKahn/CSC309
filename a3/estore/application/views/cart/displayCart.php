@@ -22,7 +22,7 @@
 ?>
         <tr>
             <td>
-                <form class="form-horizontal" role="form" action='<?= base_url();?>store/addOneProductToCart/<?= $product->id ?>' method="post">
+                <form class="form-horizontal" role="form" action='<?= base_url();?>cart/addOneProductToCart/<?= $product->id ?>' method="post">
                     <div class="form-group">
                         <div class="col-lg-offset-1 col-lg-10">
                             <button type="submit" class="btn btn-primary">+</button>
@@ -30,7 +30,7 @@
                     </div>
                 </form>
                 <p><?=$item->quantity?></p>
-                <form class="form-horizontal" role="form" action='<?= base_url();?>store/removeOneProductFromCart/<?= $product->id ?>' method="post">
+                <form class="form-horizontal" role="form" action='<?= base_url();?>cart/removeOneProductFromCart/<?= $product->id ?>' method="post">
                     <div class="form-group">
                         <div class="col-lg-offset-1 col-lg-10">
                             <button type="submit" class="btn btn-primary">-</button>
@@ -42,13 +42,13 @@
             <td><?=$product->description?></td>
             <td><?=number_format((float)$product->price, 2, '.', '')?></td>
             <td><img src="<?= base_url();?>images/product/<?= $product->photo_url?>" width='100px'/></td>
-            <td><a href="<?= base_url();?>store/removeProductFromCart/<?= $product->id?>">Remove All of the product from the cart</a></td>
+            <td><a href="<?= base_url();?>cart/removeProductFromCart/<?= $product->id?>">Remove All of the product from the cart</a></td>
         </tr>
 <?php
     }
 ?>
 </table>
 <p>Total: $<?=number_format((float)$total, 2, '.', '')?></p>
-<a href="<?= base_url();?>store/checkout">
+<a href="<?= base_url();?>cart/checkout">
     <button type="button" class="btn btn-success btn-lg">Checkout</button>
 </a>

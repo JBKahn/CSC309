@@ -44,11 +44,9 @@
         }
 
         buffer +=       '</table>'
-
-
         buffer+=    '</center>'
         buffer+='</body></html>'
         top.wRef.document.writeln(buffer)
         top.wRef.document.close()
-}
+    }
 </script>

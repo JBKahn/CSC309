@@ -14,12 +14,12 @@
                 <?php
                     if (isset($loggedInAs) && $loggedInAs === 'customer') {
                 ?>
-                <li role="presentation" class="active"><a href="<?= base_url();?>store/cart">View Your Cart</a></li>
+                <li role="presentation" class="active"><a href="<?= base_url();?>cart/index">View Your Cart</a></li>
                 <?php
                     }
                     if (isset($loggedInAs) && !empty($loggedInAs)) {
                 ?>
-                <li role="presentation" class="active"><a href="<?= base_url();?>store/logout">Logout</a></li>
+                <li role="presentation" class="active"><a href="<?= base_url();?>authentication/logout">Logout</a></li>
                 <?php
                     }
                 ?>

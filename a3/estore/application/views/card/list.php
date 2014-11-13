@@ -1,9 +1,9 @@
 <h2>Product Table</h2>
 <?php
     if ($loggedInAs === 'admin') {
-        echo "<p>" . anchor('store/newForm','Add New Product') . "</p>";
-        echo "<p>" . anchor('store/viewOrders','View Past Finalized Orders') . "</p>";
-        echo "<p>" . anchor('store/deleteAll', 'Delete all customer and order information', array('onClick' => "return confirm('Are you sure? This action cannot be undone.')"))  . "</p>";
+        echo "<p>" . anchor('card/newForm','Add New Product') . "</p>";
+        echo "<p>" . anchor('admin/viewOrders','View Past Finalized Orders') . "</p>";
+        echo "<p>" . anchor('admin/deleteAll', 'Delete all customer and order information', array('onClick' => "return confirm('Are you sure? This action cannot be undone.')"))  . "</p>";
     }
 ?>
 <table class="table table-hover">
@@ -25,12 +25,12 @@
             <td>
     <?php
                 if ($loggedInAs === 'admin') {
-                    echo anchor("store/read/$product->id",'View');
-                    echo anchor("store/editForm/$product->id",'Edit');
-                    echo anchor("store/delete/$product->id",'Delete',"onClick='return confirm(\"Do you really want to delete this product?\");'");
+                    echo anchor("card/read/$product->id",'View');
+                    echo anchor("card/editForm/$product->id",'Edit');
+                    echo anchor("card/delete/$product->id",'Delete',"onClick='return confirm(\"Do you really want to delete this product?\");'");
                 }
                 if ($loggedInAs !== 'admin') {
-                    echo anchor("store/addOneProductToCart/$product->id",'Add to Cart');
+                    echo anchor("cart/addOneProductToCart/$product->id",'Add to Cart');
                 }
     ?>
             </td>

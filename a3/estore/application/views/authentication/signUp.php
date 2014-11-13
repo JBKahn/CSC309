@@ -1,5 +1,5 @@
 <h2>Register As a Customer On Our Site</h2>
-<form class="form-horizontal" role="form" action='<?= base_url();?>store/addCustomer' method="post">
+<form class="form-horizontal" role="form" action='<?= base_url();?>authentication/addCustomer' method="post">
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "First Name" ?></label>
         <div class="col-sm-10">

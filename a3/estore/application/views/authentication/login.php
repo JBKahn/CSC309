@@ -1,4 +1,4 @@
-<form class="form-horizontal" role="form" action='<?= base_url();?>store/login' method="post">
+<form class="form-horizontal" role="form" action='<?= base_url();?>authentication/login' method="post">
     <div class="form-group">
         <label class="col-sm-2 control-label"><?php echo "User Name" ?></label>
         <div class="col-sm-10">
@@ -15,7 +15,7 @@
     </div>
     <div class="form-group">
         <div class="col-lg-offset-3 col-lg-10">
-            <button type="submit" class="btn btn-success">Login</button> or <a href="<?= base_url();?>store/signUp" class="btn btn-primary">Register</a>
+            <button type="submit" class="btn btn-success">Login</button> or <a href="<?= base_url();?>authentication/signUp" class="btn btn-primary">Register</a>
         </div>
     </div>
 </form>
