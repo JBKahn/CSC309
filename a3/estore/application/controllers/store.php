@@ -249,16 +249,17 @@ class Store extends CI_Controller {
 
         $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() == true) {
+            $login = htmlspecialchars($this->input->get_post('login'));
+            $password = htmlspecialchars($this->input->get_post('password'));
 
             // if user and pass are admin, log in as admin
-            if (($customer->login === 'admin') && ($customer->password === 'admin')) {
+            if (($login === 'admin') && ($password === 'admin')) {
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['isAdmin'] = true;
                 redirect('store/index', 'refresh');
             } else {
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['isAdmin'] = false;
-                $_SESSION['customerID'] = $authenticated->row()->id;
                 redirect('store/index', 'refresh');
             }
         } else {
@@ -269,14 +270,18 @@ class Store extends CI_Controller {
 
     function authentication_check() {
         $customer = new Customer;
-        $customer->login = htmlspecialchars($this->input->get('login'));
-        $customer->password = htmlspecialchars($this->input->get('password'));
+        $customer->login = htmlspecialchars($this->input->get_post('login'));
+        $customer->password = htmlspecialchars($this->input->get_post('password'));
 
         // check database for valid login info
         $this->load->model('customer_model');
         $authenticated = $this->customer_model->isValidLogin($customer);
 
-        if ((($customer->login === 'admin') && ($customer->password === 'admin')) || ($authenticated->num_rows() > 0)) {
+        if (($customer->login === 'admin') && ($customer->password === 'admin')) {
+            return TRUE;
+        };
+        if ($authenticated->num_rows() > 0) {
+            $_SESSION['customerID'] = $authenticated->row()->id;
             return TRUE;
         }
 
@@ -311,34 +316,26 @@ class Store extends CI_Controller {
     }
 
     function adjustProductInCart($id, $difference, $removeAll) {
-        if ((!isset($_SESSION['cart']) || !$_SESSION['cart']) && $difference > 0) {
+        $productInCart = false;
+        $items = unserialize($_SESSION['cart']);
+        for ($index = 0; $index<count($items); $index++) {
+            if ($items[$index]->product_id == $id) {
+                $items[$index]->quantity += $difference;
+                $productInCart = true;
+                if ($items[$index]->quantity <= 0 || $removeAll) {
+                    unset($items[$index]);
+                    $items = array_values($items);
+                }
+                break;
+            }
+        }
+        if (!$productInCart && $difference > 0) {
             $item = new Order_item;
             $item->product_id = $id;
             $item->quantity = 1;
-            $_SESSION['cart'] = serialize(array($item));
-        } else {
-            $productInCart = false;
-            $items = unserialize($_SESSION['cart']);
-            for ($index = 0; $index<count($items); $index++) {
-                if ($items[$index]->product_id == $id) {
-                    $items[$index]->quantity += $difference;
-                    $productInCart = true;
-                    if ($items[$index]->quantity <= 0 || $removeAll) {
-                        unset($items[$index]);
-                        $items = array_values($items);
-                    }
-                    break;
-                }
-            }
-            if (!$productInCart && $difference > 0) {
-                $item = new Order_item;
-                $item->product_id = $id;
-                $item->quantity = 1;
-                $items[] = $item;
-            }
-            $_SESSION['cart'] = serialize($items);
+            $items[] = $item;
         }
-
+        $_SESSION['cart'] = serialize($items);
     }
 
     function addOneProductToCart($id){
@@ -346,7 +343,15 @@ class Store extends CI_Controller {
             $this->index();
             return;
         }
-        $this->adjustProductInCart($id, 1, false);
+        if (!isset($_SESSION['cart']) || !$_SESSION['cart']) {
+            // Initialize the cart.
+            $item = new Order_item;
+            $item->product_id = $id;
+            $item->quantity = 1;
+            $_SESSION['cart'] = serialize(array($item));
+        } else {
+            $this->adjustProductInCart($id, 1, false);
+        }
         $this->cart();
     }
 
@@ -379,7 +384,7 @@ class Store extends CI_Controller {
             return;
         }
 
-        $this->renderPage('checkout/creditCardForm.php', $data);
+        $this->renderPage('checkout/creditCardForm.php', null);
     }
 
     function check_valid_expiry() {
@@ -468,26 +473,20 @@ class Store extends CI_Controller {
             $this->load->model('customer_model');
             $customer = $this->customer_model->get($order->customer_id);
             if ($customer->email) {
-    /*          // Commenting out as suggested
-
-                $config['smtp_host'] = 'smtp.gmail.com';
-                $config['smtp_user'] = 'weneedtomakeanemail@gmail.com';
-                $config['smtp_pass'] = 'bestpassword3v3r';
-                $config['smtp_port'] = '465';
-    */
-                $config['mailtype'] = 'html';
+                // Commenting out as suggested
                 $message = $this->load->view('checkout/emailReceiptToCustomer.php', $data, TRUE);
-                $this->email->initialize($config);
-                $this->email->from('weneedtomakeanemail@gmail.com', 'Baseball Card Store');
+                $this->load->library('email');
+                $this->email->from('orlykahnmakeupartist@gmail.com', 'Baseball Card Store');
                 $this->email->to($customer->email);
                 $this->email->subject('Your Baseball Card Reciept');
                 $this->email->message($message);
                 $this->email->send();
+                echo $this->email->print_debugger();
             }
             $this->renderPage('checkout/orderReciept.php', $data);
         }
         else {
-            $this->renderPage('checkout/creditCardForm.php', $data);
+            $this->renderPage('checkout/creditCardForm.php', null);
         }
     }
 

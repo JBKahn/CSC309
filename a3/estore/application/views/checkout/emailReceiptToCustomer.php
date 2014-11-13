@@ -15,8 +15,8 @@
             <tr>
                 <td><?=$quantity[$i]?></td>
                 <td><?=$name[$i]?></td>
-                <td><?=number_format((float)$price[$i], 2, '.', '')?></td>
-                <td><?=number_format((float)$quantity[$i]*$price[$i], 2, '.', '')?></td>
+                <td>$<?=number_format((float)$price[$i], 2, '.', '')?></td>
+                <td>$<?=number_format((float)$quantity[$i]*$price[$i], 2, '.', '')?></td>
             </tr>
     <?php
         }
