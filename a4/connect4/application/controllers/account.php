@@ -73,6 +73,18 @@ class Account extends CI_Controller
         $this->load->view('account/newForm');
     }
     
+    public function check_capcha_code()
+    {
+        include_once $_SERVER['DOCUMENT_ROOT'] . '/securimage/securimage.php';
+        $securimage = new Securimage();
+
+        if ($securimage->check($this->input->post('captcha_code')) == false) {
+            $this->form_validation->set_message('check_capcha_code', 'This code does not match the image.');
+            return false;
+        }
+        return true;
+    }
+
     public function createNew()
     {
         $this->load->library('form_validation');
@@ -81,6 +93,7 @@ class Account extends CI_Controller
         $this->form_validation->set_rules('first', 'First', "required");
         $this->form_validation->set_rules('last', 'last', "required");
         $this->form_validation->set_rules('email', 'Email', "required|is_unique[user.email]");
+        $this->form_validation->set_rules('captcha_code', 'Capcha Code', "callback_check_capcha_code");
         
     
         if ($this->form_validation->run() === false) {
