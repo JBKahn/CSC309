@@ -1,7 +1,6 @@
  body{
- 	background-image:url('http://localhost/csc309db/images/dcs_logo.png');
-	background-repeat:no-repeat;
-	background-size:200px;
+    background-repeat:no-repeat;
+    background-size:200px;
     font-family: Arial, Verdana, sans-serif;
     margin:0;
     padding:0;
@@ -9,45 +8,75 @@
   
  
  input,label {
- 	display: block;
+    display: block;
  }
  
  
  h1 {
- 	font-size:2em;
- 	color: green;
+    font-size:2em;
+    color: green;
  }
  
  h2{
- 	font-size:1em;
- 	color: blue;
+    font-size:1em;
+    color: blue;
  }
 
  #header{
     font-size:12px;
-	width: 700px;
-	height: 50px;
+    width: 700px;
+    height: 50px;
  }
  
  #header > h1 {
- 		text-align:center
+        text-align:center
  }
  
  #nav{
- 	padding: 5pt;
-	position: absolute;	
-	width:130px;
-	height: 800px;
-	font-size: 10pt;
+    padding: 5pt;
+    position: absolute; 
+    width:130px;
+    height: 800px;
+    font-size: 10pt;
     border:1px solid #31363E;
     background: lightgray;
  }
  
  #main{
-	margin-left:160px;
+    margin-left:160px;
     width:540px;
     height:800px;
-	background: white;
+    background: white;
  }
 
+/*game*/
+#CheckersBoard{
+    border-radius: 30px;
+    background-color: #526EEF;
+    width: 700px;
+    height: 600px;
+    margin: 0 auto;
+}
 
+.slot{
+    background-color: #FFFFFF;
+    border-radius: 100px;
+    float: left;
+    width: 70px;
+    height: 70px;
+    margin: 15px;
+}
+
+.slot.red.hover-column,
+.slot.red{
+    background-color: #FF4422;
+}
+
+.slot.yellow.hover-column,
+.slot.yellow{
+    background-color: #F7EA82;
+}
+
+.slot.hover-column{
+    background-color: #C0AEAE;
+}
