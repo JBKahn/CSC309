@@ -49,6 +49,10 @@
     background: white;
  }
 
+input {
+    display: block;
+}
+
 /*game*/
 #CheckersBoard{
     border-radius: 30px;
