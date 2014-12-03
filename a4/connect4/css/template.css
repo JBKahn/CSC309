@@ -62,6 +62,11 @@ input {
     margin: 0 auto;
 }
 
+#status{
+    font-size: 50px;
+    text-align: center;
+}
+
 .slot{
     background-color: #FFFFFF;
     border-radius: 100px;

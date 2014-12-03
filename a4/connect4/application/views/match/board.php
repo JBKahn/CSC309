@@ -80,22 +80,17 @@
                         $('.hover-column').removeClass('hover-column');
                         // Update the current players screen
                         var index = $('.slot').index(this);
-                        board[index] = playerNum;
+                        board[this.getAttribute('index')] = playerNum;
 
                         // post the move
-                        var column = index % 7;
                         var url = "<?= base_url() ?>board/postGameState";
-                        var clicked = this;
-                        $.post(url,{column_clicked : column},function(data,textStatus,jqXHR){});
+                        $.post(url,{column_clicked : this.getAttribute('col')},function(data,textStatus,jqXHR){});
                     }
                 });
 
                 $('.slot').hover(function(){
                     if(board[42] == playerNum && match_status == 1)  {
-                        var column = $('.slot').index(this) % 7;
-                        for(var row = 0;row < 6; row++) {
-                            $('.slot').eq(row * 7 + column).addClass('hover-column');
-                        }
+                        $(this).parent().parent().find('[col="' + this.getAttribute('col')  + '"]').addClass('hover-column');
                     }
                 },function(){
                     $('.hover-column').removeClass('hover-column');
@@ -135,7 +130,7 @@
                 for ($row = 0; $row < 6; $row++) {
                     echo '<div class="row">';
                     for ($column = 0; $column < 7; $column++) {
-                        echo '<div class="slot"></div>';
+                        echo '<div class="slot" col="'.$column.'" row="'.$row.'" index="'.(($row * 7) + $column).'"></div>';
                     }
                     echo '</div>';
                 }
